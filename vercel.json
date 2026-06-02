@@ -2,7 +2,10 @@
   "builds": [
     {
       "src": "**/*.php",
-      "use": "vercel-php@0.7.2"
+      "use": "vercel-php@0.7.2",
+      "config": {
+        "includeFiles": ["backend/**"]
+      }
     }
   ],
   "routes": [
