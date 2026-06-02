@@ -64,7 +64,7 @@ try {
      // -------------------------------------------------------
      // 1. Dynamic Schema Initialization (Auto-Migration)
      // -------------------------------------------------------
-     $chkTable = $pdo->query("SHOW TABLES LIKE 'users'");
+     $chkTable = $pdo->query("SHOW TABLES LIKE 'cars'");
      if (!$chkTable->fetch()) {
          $sql_file = __DIR__ . '/database.sql';
          if (file_exists($sql_file)) {
@@ -120,6 +120,10 @@ try {
                  if ($q !== '') {
                      // Skip line comments
                      if (strpos($q, '--') === 0 || strpos($q, '#') === 0) {
+                         continue;
+                     }
+                     // Skip database creation and switching statements
+                     if (stripos($q, 'CREATE DATABASE') === 0 || stripos($q, 'USE ') === 0) {
                          continue;
                      }
                      try {
