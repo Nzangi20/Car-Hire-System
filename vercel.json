@@ -2,12 +2,10 @@
   "functions": {
     "api/index.php": {
       "runtime": "vercel-php@0.7.2",
-      "config": {
-        "includeFiles": [
-          "backend/**",
-          "database.sql"
-        ]
-      }
+      "includeFiles": [
+        "backend/**",
+        "database.sql"
+      ]
     }
   },
   "routes": [
