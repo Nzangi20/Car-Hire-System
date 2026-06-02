@@ -66,7 +66,7 @@ try {
      // -------------------------------------------------------
      $chkTable = $pdo->query("SHOW TABLES LIKE 'users'");
      if (!$chkTable->fetch()) {
-         $sql_file = __DIR__ . '/../database.sql';
+         $sql_file = __DIR__ . '/database.sql';
          if (file_exists($sql_file)) {
              $sql = file_get_contents($sql_file);
              
