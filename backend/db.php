@@ -67,76 +67,80 @@ try {
      $chkTable = $pdo->query("SHOW TABLES LIKE 'cars'");
      if (!$chkTable->fetch()) {
          $sql_file = __DIR__ . '/database.sql';
-         if (file_exists($sql_file)) {
-             $sql = file_get_contents($sql_file);
-             
-             // Strip multi-line comments and clean up SQL input
-             $sql = preg_replace('/\/\*.*?\*\//s', '', $sql);
-             
-             $queries = [];
-             $accumulator = '';
-             $in_string = false;
-             $string_char = '';
-             $escaped = false;
-             
-             $len = strlen($sql);
-             for ($i = 0; $i < $len; $i++) {
-                 $char = $sql[$i];
-                 
-                 if ($escaped) {
-                     $accumulator .= $char;
-                     $escaped = false;
-                     continue;
-                 }
-                 if ($char === '\\') {
-                     $accumulator .= $char;
-                     $escaped = true;
-                     continue;
-                 }
-                 if (($char === '"' || $char === "'") && !$in_string) {
-                     $in_string = true;
-                     $string_char = $char;
-                     $accumulator .= $char;
-                     continue;
-                 }
-                 if ($in_string && $char === $string_char) {
-                     $in_string = false;
-                     $accumulator .= $char;
-                     continue;
-                 }
-                 if ($char === ';' && !$in_string) {
-                     $queries[] = $accumulator;
-                     $accumulator = '';
-                     continue;
-                 }
-                 $accumulator .= $char;
-             }
-             if (trim($accumulator) !== '') {
-                 $queries[] = $accumulator;
-             }
-             
-             foreach ($queries as $q) {
-                 $q = trim($q);
-                 if ($q !== '') {
-                     // Skip line comments
-                     if (strpos($q, '--') === 0 || strpos($q, '#') === 0) {
-                         continue;
-                     }
-                     // Skip database creation and switching statements
-                     if (stripos($q, 'CREATE DATABASE') === 0 || stripos($q, 'USE ') === 0) {
-                         continue;
-                     }
-                     try {
-                         $pdo->exec($q);
-                     } catch (\PDOException $ex) {
-                         // Ignore minor errors on database creation if database already exists
-                         if (strpos($ex->getMessage(), 'DATABASE') === false) {
-                             throw $ex;
-                         }
-                     }
-                 }
-             }
-         }
+          if (file_exists($sql_file)) {
+              // Read and clean comments line by line
+              $lines = file($sql_file);
+              $clean_sql = '';
+              foreach ($lines as $line) {
+                  $trimmed = trim($line);
+                  if ($trimmed === '' || strpos($trimmed, '--') === 0 || strpos($trimmed, '#') === 0) {
+                      continue;
+                  }
+                  $clean_sql .= $line . "\n";
+              }
+              
+              // Strip multi-line comments
+              $clean_sql = preg_replace('/\/\*.*?\*\//s', '', $clean_sql);
+              
+              $queries = [];
+              $accumulator = '';
+              $in_string = false;
+              $string_char = '';
+              $escaped = false;
+              
+              $len = strlen($clean_sql);
+              for ($i = 0; $i < $len; $i++) {
+                  $char = $clean_sql[$i];
+                  if ($escaped) {
+                      $accumulator .= $char;
+                      $escaped = false;
+                      continue;
+                  }
+                  if ($char === '\\') {
+                      $accumulator .= $char;
+                      $escaped = true;
+                      continue;
+                  }
+                  if (($char === '"' || $char === "'") && !$in_string) {
+                      $in_string = true;
+                      $string_char = $char;
+                      $accumulator .= $char;
+                      continue;
+                  }
+                  if ($in_string && $char === $string_char) {
+                      $in_string = false;
+                      $accumulator .= $char;
+                      continue;
+                  }
+                  if ($char === ';' && !$in_string) {
+                      $queries[] = $accumulator;
+                      $accumulator = '';
+                      continue;
+                  }
+                  $accumulator .= $char;
+              }
+              if (trim($accumulator) !== '') {
+                  $queries[] = $accumulator;
+              }
+              
+              foreach ($queries as $q) {
+                  $q = trim($q);
+                  if ($q !== '') {
+                      // Skip database creation and switching statements
+                      if (stripos($q, 'CREATE DATABASE') === 0 || stripos($q, 'USE ') === 0) {
+                          continue;
+                      }
+                      try {
+                          $pdo->exec($q);
+                      } catch (\PDOException $ex) {
+                          // Ignore minor errors on database creation if database already exists
+                          if (strpos($ex->getMessage(), 'DATABASE') === false) {
+                              throw $ex;
+                          }
+                      }
+                  }
+              }
+          }
      }
 
      // -------------------------------------------------------
