@@ -34,20 +34,3 @@ A professional, full-stack Car Hire management system built using PHP, MySQL (PD
 3. Configure database credentials in `backend/db.php` or set the local environment variables.
 4. Access the system via `http://localhost/Car_Hire_System`.
 
----
-
-## ☁️ Vercel Deployment
-
-This project contains a pre-configured `vercel.json` file. 
-
-1. Connect this repository to your Vercel account.
-2. In the Vercel project settings, configure your production database credentials via environment variables:
-   * `DB_HOST`
-   * `DB_NAME`
-   * `DB_USER`
-   * `DB_PASS`
-   * `DB_PORT`
-3. Trigger a deployment by pushing to `main` or using the Vercel CLI:
-   ```bash
-   vercel --prod
-   ```
