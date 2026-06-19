@@ -25,12 +25,3 @@ A professional, full-stack Car Hire management system built using PHP, MySQL (PD
 * **Database:** MySQL via PDO (with SSL support for secure remote connections like Aiven)
 * **Serverless Deployment:** Vercel (using the community `vercel-php` runtime)
 
----
-
-## ⚙️ Local Development
-
-1. Clone this repository into your local web server directory (e.g., `xampp/htdocs/Car_Hire_System`).
-2. Import the database schema from `backend/database.sql` into your local MySQL server.
-3. Configure database credentials in `backend/db.php` or set the local environment variables.
-4. Access the system via `http://localhost/Car_Hire_System`.
-
